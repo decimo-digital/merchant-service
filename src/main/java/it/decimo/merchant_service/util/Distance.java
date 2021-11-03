@@ -1,6 +1,5 @@
 package it.decimo.merchant_service.util;
 
-import org.hibernate.dialect.PointbaseDialect;
 import org.springframework.data.geo.Point;
 
 public class Distance {
