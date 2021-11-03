@@ -11,9 +11,11 @@ import javax.persistence.Id;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.geo.Point;
 
+import it.decimo.merchant_service.dto.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,9 +35,19 @@ public class Merchant {
 
     @Column(name = "store_location")
     @JsonAlias(value = "store_location")
-    // @JsonDeserialize(using = PointDeserializer.class)
-    // @JsonSerialize(using = PointSerializer.class)
     private Point storeLocation;
+
+    /**
+     * Contiene la distanza che viene calcolata al momento della query per ciascun
+     * client
+     */
+    @JsonAnyGetter
+    private Double distance;
+
+    @JsonIgnore
+    public Point getPoint() {
+        return storeLocation;
+    }
 
     @JsonAnyGetter
     public Map<String, Double> getStoreLocation() {
@@ -48,7 +60,7 @@ public class Merchant {
     }
 
     @JsonAnySetter
-    public void setStoreLocation(StoreLocation location) {
+    public void setStoreLocation(Location location) {
         this.storeLocation = new Point(location.getX(), location.getY());
     }
 
@@ -59,19 +71,5 @@ public class Merchant {
     @JsonAlias(value = "user_owner")
     @Column(name = "user_owner")
     private Integer userOwner;
-
-}
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-class StoreLocation {
-    private double x;
-    private double y;
-
-    public StoreLocation(Double x, Double y) {
-        this.x = x;
-        this.y = y;
-    }
 
 }
