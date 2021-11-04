@@ -2,8 +2,6 @@ package it.decimo.merchant_service.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +9,11 @@ import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.repository.MerchantRepository;
 import it.decimo.merchant_service.util.Distance;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class MerchantService {
-    private static final Logger logger = LoggerFactory.getLogger(MerchantService.class);
 
     @Autowired
     private MerchantRepository merchantRepository;
@@ -28,10 +27,10 @@ public class MerchantService {
      */
     public Integer saveMerchant(Merchant merchant) {
         try {
-            logger.info("Saving merchant {}", merchant.getStoreName());
+            log.info("Saving merchant {}", merchant.getStoreName());
             return merchantRepository.save(merchant).getId();
         } catch (Exception e) {
-            logger.error("Got error while saving merchant {}", merchant.getStoreName(), e);
+            log.error("Got error while saving merchant {}", merchant.getStoreName(), e);
             return null;
         }
     }

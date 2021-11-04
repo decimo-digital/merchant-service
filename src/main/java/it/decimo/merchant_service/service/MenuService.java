@@ -2,19 +2,17 @@ package it.decimo.merchant_service.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.decimo.merchant_service.model.MenuItem;
 import it.decimo.merchant_service.repository.MenuItemRepository;
 import it.decimo.merchant_service.repository.MerchantRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class MenuService {
-
-    private static final Logger logger = LoggerFactory.getLogger(MenuService.class);
 
     @Autowired
     private MerchantRepository merchantRepository;
@@ -36,7 +34,7 @@ public class MenuService {
      * @param merchantId Il locale per cui ci interessa il Menu
      */
     public List<MenuItem> getMenu(int merchantId) {
-        logger.info("Getting menu of {}", merchantId);
+        log.info("Getting menu of {}", merchantId);
         return menuItemRepository.findById_MerchantId(merchantId);
     }
 
@@ -56,7 +54,7 @@ public class MenuService {
      * Rimuove un oggetto dal menu del locale, se è effettivamente suo
      */
     public void deleteItem(int menuItemId, int merchantId) {
-        logger.info("Deleted item {}-{}", menuItemId, merchantId);
+        log.info("Deleted item {}-{}", menuItemId, merchantId);
         menuItemRepository.deleteItem(menuItemId, merchantId);
     }
 }
