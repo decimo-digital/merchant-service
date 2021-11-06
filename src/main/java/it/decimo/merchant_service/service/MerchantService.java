@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.decimo.merchant_service.dto.Location;
+import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
+import it.decimo.merchant_service.model.MerchantData;
+import it.decimo.merchant_service.repository.MerchantDataRepository;
 import it.decimo.merchant_service.repository.MerchantRepository;
 import it.decimo.merchant_service.util.Distance;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,15 @@ public class MerchantService {
 
     @Autowired
     private MerchantRepository merchantRepository;
+    @Autowired
+    private MerchantDataRepository merchantDataRepository;
+
+    /**
+     * Controlla se esiste un {@link Merchant} con l'id richiesto
+     */
+    public boolean merchantExists(int id) {
+        return merchantRepository.findById(id).isPresent();
+    }
 
     /**
      * Salva il merchant passato come parametro all'interno del DB
@@ -28,7 +40,14 @@ public class MerchantService {
     public Integer saveMerchant(Merchant merchant) {
         try {
             log.info("Saving merchant {}", merchant.getStoreName());
-            return merchantRepository.save(merchant).getId();
+            final var merchId = merchantRepository.save(merchant).getId();
+            final var data = new MerchantData() {
+                {
+                    setMerchantId(merchId);
+                }
+            };
+            merchantDataRepository.save(data);
+            return merchId;
         } catch (Exception e) {
             log.error("Got error while saving merchant {}", merchant.getStoreName(), e);
             return null;
@@ -58,6 +77,21 @@ public class MerchantService {
         }
 
         return merchants;
+    }
+
+    /***
+     * Aggiorna lo status del {@link Merchant} con i dati passati nell'update
+     */
+    public void updateMerchant(MerchantStatusDto update) {
+        final var data = merchantDataRepository.findById(update.getId()).get();
+        if (update.getFreeSeats() != null) {
+            data.setFreeSeats(update.getFreeSeats());
+        }
+        if (update.getTotalSeats() != null) {
+            data.setTotalSeats(update.getTotalSeats());
+        }
+
+        merchantDataRepository.save(data);
     }
 
 }

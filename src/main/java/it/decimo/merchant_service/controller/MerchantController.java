@@ -3,6 +3,8 @@ package it.decimo.merchant_service.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.dto.Location;
+import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.service.MerchantService;
 
@@ -47,5 +50,17 @@ public class MerchantController {
         } else {
             return ResponseEntity.ok().body(BasicResponse.builder().message(id.toString()).code("OK").build());
         }
+    }
+
+    @PatchMapping("/{id}")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Il merchant è stato aggiornato"),
+            @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste") })
+    public ResponseEntity<Object> patchMerchantStatus(@PathVariable int id, @RequestBody MerchantStatusDto update) {
+        if (!merchantService.merchantExists(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        update.setId(id);
+        merchantService.updateMerchant(update);
+        return ResponseEntity.ok().build();
     }
 }
