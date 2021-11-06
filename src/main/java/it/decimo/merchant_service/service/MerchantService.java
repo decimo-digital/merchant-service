@@ -82,7 +82,7 @@ public class MerchantService {
     /***
      * Aggiorna lo status del {@link Merchant} con i dati passati nell'update
      */
-    public void updateMerchant(MerchantStatusDto update) {
+    public MerchantData updateMerchant(MerchantStatusDto update) {
         final var data = merchantDataRepository.findById(update.getId()).get();
         if (update.getFreeSeats() != null) {
             data.setFreeSeats(update.getFreeSeats());
@@ -91,7 +91,7 @@ public class MerchantService {
             data.setTotalSeats(update.getTotalSeats());
         }
 
-        merchantDataRepository.save(data);
+        return merchantDataRepository.save(data);
     }
 
 }

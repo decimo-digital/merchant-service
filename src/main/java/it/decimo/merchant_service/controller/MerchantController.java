@@ -20,12 +20,15 @@ import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
+import it.decimo.merchant_service.model.MerchantData;
+import it.decimo.merchant_service.repository.MerchantDataRepository;
 import it.decimo.merchant_service.service.MerchantService;
 
 @RestController
 @RequestMapping("/api/merchant")
 public class MerchantController {
-
+    @Autowired
+    private MerchantDataRepository merchantDataRepository;
     @Autowired
     private MerchantService merchantService;
 
@@ -53,14 +56,29 @@ public class MerchantController {
     }
 
     @PatchMapping("/{id}")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Il merchant è stato aggiornato"),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Il merchant è stato aggiornato", content = @Content(schema = @Schema(implementation = MerchantData.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste") })
     public ResponseEntity<Object> patchMerchantStatus(@PathVariable int id, @RequestBody MerchantStatusDto update) {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.notFound().build();
         }
         update.setId(id);
-        merchantService.updateMerchant(update);
-        return ResponseEntity.ok().build();
+        final var newData = merchantService.updateMerchant(update);
+        return ResponseEntity.ok().body(newData);
+    }
+
+    @GetMapping("/{id}/data")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "I dati del merchant richiesto", content = @Content(schema = @Schema(implementation = MerchantData.class))),
+            @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste") })
+    public ResponseEntity<Object> getMerchantData(@PathVariable int id) {
+        if (!merchantService.merchantExists(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        final var merchantData = merchantDataRepository.findById(id);
+
+        return ResponseEntity.ok(merchantData);
     }
 }
