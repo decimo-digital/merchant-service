@@ -1,12 +1,9 @@
 package it.decimo.merchant_service.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
@@ -20,14 +17,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity(name = "merchant_menu")
 @Data
-@IdClass(MenuId.class)
 public class MenuItem {
     @Id
-    @Column(name = "menu_item_id")
+    @Column(name = "item_id")
     @GeneratedValue
     private Integer menuItemId;
 
-    @Id
     @Column(name = "merchant_id")
     private Integer merchantId;
 
@@ -40,19 +35,4 @@ public class MenuItem {
 
     @Column(name = "price")
     private Float price;
-}
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-class MenuId implements Serializable {
-    @Id
-    @Column(name = "menu_item_id")
-    @GeneratedValue
-    private Integer menuItemId;
-
-    @Id
-    @Column(name = "merchant_id")
-    private Integer merchantId;
 }

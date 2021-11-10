@@ -28,13 +28,13 @@ import lombok.NoArgsConstructor;
 @Entity(name = "merchant")
 public class Merchant {
 
-    @GeneratedValue
     @Id
+    @GeneratedValue
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "store_location")
-    @JsonAlias(value = "store_location")
+    @Column(name = "location")
+    @JsonAlias(value = "location")
     private Point storeLocation;
 
     /**
@@ -68,8 +68,8 @@ public class Merchant {
     @JsonAlias(value = "store_name")
     private String storeName;
 
-    @JsonAlias(value = "user_owner")
-    @Column(name = "user_owner")
-    private Integer userOwner;
+    @JsonAlias(value = "owner")
+    @Column(name = "owner")
+    private Integer owner;
 
 }

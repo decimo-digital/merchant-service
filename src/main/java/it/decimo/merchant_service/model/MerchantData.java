@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MerchantData {
     @Id
-    @Column(name = "merch_id")
+    @Column(name = "merchant_id")
     private int merchantId;
 
     //@Column(name = "openings")
