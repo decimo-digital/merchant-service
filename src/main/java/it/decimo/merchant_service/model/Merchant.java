@@ -45,6 +45,9 @@ public class Merchant {
     private Double distance;
 
     @JsonIgnore
+    private MerchantData data;
+
+    @JsonIgnore
     public Point getPoint() {
         return storeLocation;
     }

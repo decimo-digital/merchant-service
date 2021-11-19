@@ -22,6 +22,7 @@ import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.model.MerchantData;
 import it.decimo.merchant_service.repository.MerchantDataRepository;
+import it.decimo.merchant_service.repository.MerchantRepository;
 import it.decimo.merchant_service.service.MerchantService;
 
 @RestController
@@ -31,6 +32,8 @@ public class MerchantController {
     private MerchantDataRepository merchantDataRepository;
     @Autowired
     private MerchantService merchantService;
+    @Autowired
+    private MerchantRepository merchantRepository;
 
     @GetMapping(produces = "application/json")
     @ApiResponses(value = {
@@ -70,15 +73,19 @@ public class MerchantController {
 
     @GetMapping("/{id}/data")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "I dati del merchant richiesto", content = @Content(schema = @Schema(implementation = MerchantData.class))),
+            @ApiResponse(responseCode = "200", description = "I dati del merchant richiesto", content = @Content(schema = @Schema(implementation = Merchant.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste") })
     public ResponseEntity<Object> getMerchantData(@PathVariable int id) {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        final var merchantData = merchantDataRepository.findById(id);
+        final var merchantData = merchantDataRepository.findById(id).get();
 
-        return ResponseEntity.ok(merchantData);
+        final var merchant = merchantRepository.getById(id);
+
+        merchant.setData(merchantData);
+
+        return ResponseEntity.ok(merchant);
     }
 }
