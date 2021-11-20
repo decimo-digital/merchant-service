@@ -21,7 +21,6 @@ public class MerchantDto {
     public MerchantDto(Merchant merchant, MerchantData data) {
         this.id = merchant.getId();
         this.storeLocation = merchant.getPoint();
-        this.distance = merchant.getDistance();
         this.storeName = merchant.getStoreName();
         this.owner = merchant.getOwner();
         this.data = data;
@@ -35,7 +34,6 @@ public class MerchantDto {
      * Contiene la distanza che viene calcolata al momento della query per ciascun
      * client
      */
-
     private Double distance;
 
     private MerchantData data;

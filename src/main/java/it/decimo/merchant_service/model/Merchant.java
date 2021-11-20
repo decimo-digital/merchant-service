@@ -37,13 +37,6 @@ public class Merchant {
     @JsonAlias(value = "location")
     private Point storeLocation;
 
-    /**
-     * Contiene la distanza che viene calcolata al momento della query per ciascun
-     * client
-     */
-    @JsonAnyGetter
-    private Double distance;
-
     @JsonIgnore
     public Point getPoint() {
         return storeLocation;

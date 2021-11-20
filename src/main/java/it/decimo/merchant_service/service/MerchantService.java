@@ -1,11 +1,13 @@
 package it.decimo.merchant_service.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.decimo.merchant_service.dto.Location;
+import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.model.MerchantData;
@@ -64,19 +66,23 @@ public class MerchantService {
      * @return La lista degli esercenti, opzionalmente ordinata (se point è
      *         definito)
      */
-    public List<Merchant> getMerchants(Location point) {
+    public List<MerchantDto> getMerchants(Location point) {
         final var merchants = merchantRepository.findAll();
+        final var toReturn = new ArrayList<MerchantDto>();
 
         if (point != null && (point.getX() != null && point.getY() != null)) {
             for (Merchant merchant : merchants) {
                 final var merchantPosition = merchant.getPoint();
                 final var distance = Distance.gps2m(merchantPosition, point.toPoint());
-                merchant.setDistance(distance);
+
+                final MerchantDto dto = new MerchantDto(merchant, null);
+                dto.setDistance(distance);
+                toReturn.add(dto);
             }
-            merchants.sort((o1, o2) -> o1.getDistance().compareTo(o2.getDistance()));
+            toReturn.sort((o1, o2) -> o1.getDistance().compareTo(o2.getDistance()));
         }
 
-        return merchants;
+        return toReturn;
     }
 
     /***
