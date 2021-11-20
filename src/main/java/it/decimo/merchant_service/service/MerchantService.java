@@ -39,13 +39,10 @@ public class MerchantService {
      */
     public Integer saveMerchant(Merchant merchant) {
         try {
-            log.info("Saving merchant {}", merchant.getStoreName());
+            log.info("Saving merchant '{}'", merchant.getStoreName());
             final var merchId = merchantRepository.save(merchant).getId();
-            final var data = new MerchantData() {
-                {
-                    setMerchantId(merchId);
-                }
-            };
+            final var data = new MerchantData();
+            data.setMerchantId(merchId);
             merchantDataRepository.save(data);
             return merchId;
         } catch (Exception e) {
