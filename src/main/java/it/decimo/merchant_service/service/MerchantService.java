@@ -118,7 +118,7 @@ public class MerchantService {
         }
         final var merchant = merchantRepository.findById(id).get();
         log.info("Got The merchant of id {}", id);
-        final var data = merchantDataRepository.findById(id).get();
+        final var data = merchantDataRepository.findByMerchantId(id).get();
         log.info("Got the data of the merchant {}", id);
         return new MerchantDto(merchant, data);
     }
