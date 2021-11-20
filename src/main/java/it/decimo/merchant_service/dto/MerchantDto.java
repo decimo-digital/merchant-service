@@ -1,55 +1,47 @@
-package it.decimo.merchant_service.model;
+package it.decimo.merchant_service.dto;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.springframework.data.geo.Point;
 
-import it.decimo.merchant_service.dto.Location;
+import it.decimo.merchant_service.model.Merchant;
+import it.decimo.merchant_service.model.MerchantData;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "merchant")
-public class Merchant {
+public class MerchantDto {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
+    public MerchantDto(Merchant merchant, MerchantData data) {
+        this.id = merchant.getId();
+        this.storeLocation = merchant.getPoint();
+        this.distance = merchant.getDistance();
+        this.storeName = merchant.getStoreName();
+        this.owner = merchant.getOwner();
+        this.data = data;
+    }
+
     private Integer id;
 
-    @Column(name = "location")
-    @JsonAlias(value = "location")
     private Point storeLocation;
 
     /**
      * Contiene la distanza che viene calcolata al momento della query per ciascun
      * client
      */
-    @JsonAnyGetter
+
     private Double distance;
 
-    @JsonIgnore
+    private MerchantData data;
+
     public Point getPoint() {
         return storeLocation;
     }
 
-    @JsonAnyGetter
     public Map<String, Double> getStoreLocation() {
         return new HashMap<String, Double>() {
             {
@@ -59,17 +51,11 @@ public class Merchant {
         };
     }
 
-    @JsonAnySetter
     public void setStoreLocation(Location location) {
         this.storeLocation = new Point(location.getX(), location.getY());
     }
 
-    @Column(name = "store_name")
-    @JsonAlias(value = "store_name")
     private String storeName;
 
-    @JsonAlias(value = "owner")
-    @Column(name = "owner")
     private Integer owner;
-
 }

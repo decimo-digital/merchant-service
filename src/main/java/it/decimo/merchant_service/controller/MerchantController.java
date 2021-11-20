@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.dto.Location;
+import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.model.MerchantData;
@@ -73,7 +74,7 @@ public class MerchantController {
 
     @GetMapping("/{id}/data")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "I dati del merchant richiesto", content = @Content(schema = @Schema(implementation = Merchant.class))),
+            @ApiResponse(responseCode = "200", description = "I dati del merchant richiesto", content = @Content(schema = @Schema(implementation = MerchantDto.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste") })
     public ResponseEntity<Object> getMerchantData(@PathVariable int id) {
         if (!merchantService.merchantExists(id)) {
@@ -84,8 +85,8 @@ public class MerchantController {
 
         final var merchant = merchantRepository.getById(id);
 
-        merchant.setData(merchantData);
+        final var merchantDto = new MerchantDto(merchant, merchantData);
 
-        return ResponseEntity.ok(merchant);
+        return ResponseEntity.ok(merchantDto);
     }
 }
