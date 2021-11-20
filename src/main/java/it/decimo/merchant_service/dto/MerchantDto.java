@@ -23,7 +23,10 @@ public class MerchantDto {
         this.storeLocation = merchant.getPoint();
         this.storeName = merchant.getStoreName();
         this.owner = merchant.getOwner();
-        this.data = data;
+        if (data != null) {
+            this.freeSeats = data.getFreeSeats();
+            this.totalSeats = data.getTotalSeats();
+        }
     }
 
     private Integer id;
@@ -36,7 +39,8 @@ public class MerchantDto {
      */
     private Double distance;
 
-    private MerchantData data;
+    private int freeSeats;
+    private int totalSeats;
 
     public Point getPoint() {
         return storeLocation;

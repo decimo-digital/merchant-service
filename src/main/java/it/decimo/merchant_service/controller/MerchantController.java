@@ -81,6 +81,9 @@ public class MerchantController {
     public ResponseEntity<Object> getMerchantData(@PathVariable int id) {
         log.info("Getting data of merchant {}", id);
         final var merchantDto = merchantService.getMerchant(id);
+        if (merchantDto == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(merchantDto);
     }
 }
