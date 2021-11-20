@@ -70,7 +70,7 @@ public class MerchantService {
         final var merchants = merchantRepository.findAll();
         log.info("Found {} merchants", merchants.size());
         final var toReturn = new ArrayList<MerchantDto>();
-        
+
         merchants.forEach(m -> {
             toReturn.add(new MerchantDto(m, null));
         });
@@ -104,6 +104,23 @@ public class MerchantService {
         }
 
         return merchantDataRepository.save(data);
+    }
+
+    /**
+     * Ritorna il {@link Merchant} con l'id richiesto
+     * 
+     * @param id L'id del merchant
+     * @return Il merchant con l'id richiesto, oppure {@code null} se non esiste
+     */
+    public MerchantDto getMerchant(Integer id) {
+        if (!merchantExists(id)) {
+            return null;
+        }
+        final var merchant = merchantRepository.findById(id).get();
+        log.info("Got The merchant of id {}", id);
+        final var data = merchantDataRepository.findById(id).get();
+        log.info("Got the data of the merchant {}", id);
+        return new MerchantDto(merchant, data);
     }
 
 }

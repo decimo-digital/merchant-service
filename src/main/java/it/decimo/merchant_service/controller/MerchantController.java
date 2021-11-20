@@ -25,7 +25,9 @@ import it.decimo.merchant_service.model.MerchantData;
 import it.decimo.merchant_service.repository.MerchantDataRepository;
 import it.decimo.merchant_service.repository.MerchantRepository;
 import it.decimo.merchant_service.service.MerchantService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/merchant")
 public class MerchantController {
@@ -77,16 +79,8 @@ public class MerchantController {
             @ApiResponse(responseCode = "200", description = "I dati del merchant richiesto", content = @Content(schema = @Schema(implementation = MerchantDto.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste") })
     public ResponseEntity<Object> getMerchantData(@PathVariable int id) {
-        if (!merchantService.merchantExists(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        final var merchantData = merchantDataRepository.findById(id).get();
-
-        final var merchant = merchantRepository.getById(id);
-
-        final var merchantDto = new MerchantDto(merchant, merchantData);
-
+        log.info("Getting data of merchant {}", id);
+        final var merchantDto = merchantService.getMerchant(id);
         return ResponseEntity.ok(merchantDto);
     }
 }
