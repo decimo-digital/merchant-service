@@ -68,9 +68,15 @@ public class MerchantService {
      */
     public List<MerchantDto> getMerchants(Location point) {
         final var merchants = merchantRepository.findAll();
+        log.info("Found {} merchants", merchants.size());
         final var toReturn = new ArrayList<MerchantDto>();
+        
+        merchants.forEach(m -> {
+            toReturn.add(new MerchantDto(m, null));
+        });
 
         if (point != null && (point.getX() != null && point.getY() != null)) {
+
             for (Merchant merchant : merchants) {
                 final var merchantPosition = merchant.getPoint();
                 final var distance = Distance.gps2m(merchantPosition, point.toPoint());
