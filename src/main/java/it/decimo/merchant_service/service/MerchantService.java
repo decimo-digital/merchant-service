@@ -26,8 +26,11 @@ public class MerchantService {
     /**
      * Controlla se esiste un {@link Merchant} con l'id richiesto
      */
-    public boolean merchantExists(int id) {
-        return merchantRepository.findById(id).isPresent();
+    public boolean merchantExists(Integer id) {
+        log.info("Looking for existance of if {}", id);
+        final var exists = merchantRepository.findById(id).isPresent();
+        log.info("Merchant of id {} eists: {}", id, exists);
+        return exists;
     }
 
     /**

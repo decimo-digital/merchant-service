@@ -3,6 +3,8 @@ package it.decimo.merchant_service.dto;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.springframework.data.geo.Point;
 
 import it.decimo.merchant_service.model.Merchant;
@@ -42,6 +44,7 @@ public class MerchantDto {
         return storeLocation;
     }
 
+    @JsonIgnore
     public Map<String, Double> getStoreLocation() {
         return new HashMap<String, Double>() {
             {
