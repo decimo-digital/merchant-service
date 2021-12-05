@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.dto.MerchantDto;
-import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.model.MerchantData;
 import it.decimo.merchant_service.repository.CustomRepository;
@@ -102,13 +101,15 @@ public class MerchantService {
     /***
      * Aggiorna lo status del {@link Merchant} con i dati passati nell'update
      */
-    public MerchantData updateMerchant(MerchantStatusDto update) {
-        final var data = merchantDataRepository.findById(update.getId()).get();
-        if (update.getFreeSeats() != null) {
-            data.setFreeSeats(update.getFreeSeats());
-        }
+    public MerchantData updateMerchant(MerchantData update) {
+        final var data = merchantDataRepository.findById(update.getMerchantId()).get();
+
         if (update.getTotalSeats() != null) {
             data.setTotalSeats(update.getTotalSeats());
+        }
+
+        if (update.getDescription() != null) {
+            data.setDescription(update.getDescription());
         }
 
         return merchantDataRepository.save(data);

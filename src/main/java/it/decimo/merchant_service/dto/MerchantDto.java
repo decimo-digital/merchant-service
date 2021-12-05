@@ -25,7 +25,6 @@ public class MerchantDto {
         this.owner = merchant.getOwner();
         this.occupancyRate = merchant.getOccupancyRate();
         if (data != null) {
-            this.freeSeats = data.getFreeSeats();
             this.totalSeats = data.getTotalSeats();
         }
     }

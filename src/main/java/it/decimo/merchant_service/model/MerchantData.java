@@ -17,12 +17,9 @@ public class MerchantData {
     @Column(name = "merchant_id")
     private int merchantId;
 
-    @Column(name = "free_seats")
-    private int freeSeats;
-
     @Column(name = "description")
     private String description;
 
     @Column(name = "total_seats")
-    private int totalSeats;
+    private Integer totalSeats;
 }

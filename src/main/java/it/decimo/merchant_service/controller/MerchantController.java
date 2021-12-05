@@ -18,9 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.dto.MerchantDto;
-import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
-import it.decimo.merchant_service.repository.CustomRepository;
+import it.decimo.merchant_service.model.MerchantData;
 import it.decimo.merchant_service.service.MerchantService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,11 +57,11 @@ public class MerchantController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Il merchant è stato aggiornato", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste") })
-    public ResponseEntity<Object> patchMerchantStatus(@PathVariable int id, @RequestBody MerchantStatusDto update) {
+    public ResponseEntity<Object> patchMerchantStatus(@PathVariable int id, @RequestBody MerchantData update) {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.notFound().build();
         }
-        update.setId(id);
+        update.setMerchantId(id);
         merchantService.updateMerchant(update);
         return ResponseEntity.ok().body(new BasicResponse("Merchant aggiornato", "MERCHANT_UPDATED"));
     }
