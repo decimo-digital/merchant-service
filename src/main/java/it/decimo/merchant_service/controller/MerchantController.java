@@ -3,7 +3,6 @@ package it.decimo.merchant_service.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +20,7 @@ import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
-import it.decimo.merchant_service.model.MerchantData;
-import it.decimo.merchant_service.repository.MerchantDataRepository;
-import it.decimo.merchant_service.repository.MerchantRepository;
+import it.decimo.merchant_service.repository.CustomRepository;
 import it.decimo.merchant_service.service.MerchantService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,11 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/merchant")
 public class MerchantController {
     @Autowired
-    private MerchantDataRepository merchantDataRepository;
-    @Autowired
     private MerchantService merchantService;
-    @Autowired
-    private MerchantRepository merchantRepository;
 
     @GetMapping(produces = "application/json")
     @ApiResponses(value = {

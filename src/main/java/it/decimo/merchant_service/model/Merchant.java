@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -64,5 +65,20 @@ public class Merchant {
     @JsonAlias(value = "owner")
     @Column(name = "owner")
     private Integer owner;
+
+    @Column(name = "free_seats")
+    @JsonAlias(value = "free_seats")
+    private Integer freeSeats;
+
+    @Column(name = "description")
+    private String description;
+
+    @Transient
+    @JsonAlias(value = "occupancy_rate")
+    private float occupancyRate;
+
+    @Column(name = "total_seats")
+    @JsonAlias(value = "total_seats")
+    private Integer totalSeats;
 
 }

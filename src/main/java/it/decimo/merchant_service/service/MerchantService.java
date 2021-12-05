@@ -11,6 +11,7 @@ import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.dto.MerchantStatusDto;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.model.MerchantData;
+import it.decimo.merchant_service.repository.CustomRepository;
 import it.decimo.merchant_service.repository.MerchantDataRepository;
 import it.decimo.merchant_service.repository.MerchantRepository;
 import it.decimo.merchant_service.util.Distance;
@@ -19,7 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class MerchantService {
-
+    @Autowired
+    private CustomRepository customRepository;
     @Autowired
     private MerchantRepository merchantRepository;
     @Autowired
@@ -67,25 +69,31 @@ public class MerchantService {
      *         definito)
      */
     public List<MerchantDto> getMerchants(Location point) {
-        final var merchants = merchantRepository.findAll();
+        final var merchants = customRepository.findAllMerchantsWithMetadata();
+
         log.info("Found {} merchants", merchants.size());
         final var toReturn = new ArrayList<MerchantDto>();
 
         merchants.forEach(m -> {
-            toReturn.add(new MerchantDto(m, null));
+            toReturn.add(new MerchantDto(m));
         });
 
         if (point != null && (point.getX() != null && point.getY() != null)) {
 
-            for (Merchant merchant : merchants) {
+            for (MerchantDto merchant : toReturn) {
                 final var merchantPosition = merchant.getPoint();
-                final var distance = Distance.gps2m(merchantPosition, point.toPoint());
+                if (merchantPosition != null) {
+                    final var distance = Distance.gps2m(merchantPosition, point.toPoint());
+                    merchant.setDistance(distance);
+                }
 
-                final MerchantDto dto = new MerchantDto(merchant, null);
-                dto.setDistance(distance);
-                toReturn.add(dto);
             }
-            toReturn.sort((o1, o2) -> o1.getDistance().compareTo(o2.getDistance()));
+            toReturn.sort((dto1, dto2) -> {
+                if (dto1 == null || dto2 == null || dto1.getDistance() == null || dto2.getDistance() == null) {
+                    return 0;
+                }
+                return dto1.getDistance().compareTo(dto2.getDistance());
+            });
         }
 
         return toReturn;
@@ -116,11 +124,8 @@ public class MerchantService {
         if (!merchantExists(id)) {
             return null;
         }
-        final var merchant = merchantRepository.findById(id).get();
-        log.info("Got The merchant of id {}", id);
-        final var data = merchantDataRepository.findByMerchantId(id).get();
-        log.info("Got the data of the merchant {}", id);
-        return new MerchantDto(merchant, data);
+        final var merchant = customRepository.getMerchantData(id);
+        return new MerchantDto(merchant);
     }
 
 }
