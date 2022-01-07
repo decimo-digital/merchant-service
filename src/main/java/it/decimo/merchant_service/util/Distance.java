@@ -6,7 +6,7 @@ public class Distance {
 
     /**
      * Calcola la distanza in linea d'aria in metri fra due punti
-     * 
+     *
      * @param pointA Il punto di partenza
      * @param pointB Il punto di arrivo
      * @return La distanza in metri

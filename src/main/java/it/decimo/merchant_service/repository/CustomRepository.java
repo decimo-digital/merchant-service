@@ -1,16 +1,14 @@
 package it.decimo.merchant_service.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import it.decimo.merchant_service.model.Merchant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import it.decimo.merchant_service.model.Merchant;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j

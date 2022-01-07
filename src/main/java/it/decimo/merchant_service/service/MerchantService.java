@@ -1,11 +1,5 @@
 package it.decimo.merchant_service.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.model.Merchant;
@@ -15,6 +9,11 @@ import it.decimo.merchant_service.repository.MerchantDataRepository;
 import it.decimo.merchant_service.repository.MerchantRepository;
 import it.decimo.merchant_service.util.Distance;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -31,17 +30,22 @@ public class MerchantService {
      */
     public boolean merchantExists(Integer id) {
         log.info("Looking for existance of if {}", id);
-        final var exists = merchantRepository.findById(id).isPresent();
-        log.info("Merchant of id {} eists: {}", id, exists);
-        return exists;
+        final var found = merchantRepository.findById(id);
+        log.info("Merchant of id {} eists: {}", id, found.isPresent());
+
+        if (found.isPresent()) {
+            log.info("Requested merchant {} is found but it's deleted", id);
+            return found.get().isEnabled();
+        }
+        return false;
     }
 
     /**
      * Salva il merchant passato come parametro all'interno del DB
-     * 
+     *
      * @param merchant il merchant da salvare
      * @return {@code null} se non è stato possibile salvare il merchant, altrimenti
-     *         il suo {@code id}
+     * il suo {@code id}
      */
     public Integer saveMerchant(Merchant merchant) {
         try {
@@ -59,13 +63,11 @@ public class MerchantService {
 
     /**
      * Ritorna la lista di esercenti
-     * 
-     * @param point  Opzionale -- definisce il centro dal quale recuperare i
-     *               merchant. Se definito i merchant vengono ritornati ordinati
-     * @param radius Opzionale -- definisce la larghezza del raggio entro il quale
-     *               includere gli esercenti
+     *
+     * @param point Opzionale -- definisce il centro dal quale recuperare i
+     *              merchant. Se definito i merchant vengono ritornati ordinati
      * @return La lista degli esercenti, opzionalmente ordinata (se point è
-     *         definito)
+     * definito)
      */
     public List<MerchantDto> getMerchants(Location point) {
         final var merchants = customRepository.findAllMerchantsWithMetadata();
@@ -117,7 +119,7 @@ public class MerchantService {
 
     /**
      * Ritorna il {@link Merchant} con l'id richiesto
-     * 
+     *
      * @param id L'id del merchant
      * @return Il merchant con l'id richiesto, oppure {@code null} se non esiste
      */
@@ -129,4 +131,19 @@ public class MerchantService {
         return new MerchantDto(merchant);
     }
 
+    /**
+     * Elimina il merchant con l'id richiesto (eliminazione logica)
+     *
+     * @param merchantId Il merchant da eliminare
+     * @throws IllegalArgumentException se non è stato trovato il merchant richiesto
+     */
+    public void deleteMerchant(int merchantId) throws IllegalArgumentException {
+        if (!merchantExists(merchantId)) {
+            throw new IllegalArgumentException("Merchant with id " + merchantId + " does not exist");
+        }
+
+        final var merchant = merchantRepository.findById(merchantId).get();
+        merchant.setEnabled(false);
+        merchantRepository.save(merchant);
+    }
 }

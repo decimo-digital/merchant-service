@@ -1,16 +1,14 @@
 package it.decimo.merchant_service.util;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-
+import lombok.SneakyThrows;
 import org.springframework.data.geo.Point;
 
-import lombok.SneakyThrows;
+import java.io.IOException;
 
 /**
  * Deserializzatore per il {@see Point}
@@ -19,7 +17,7 @@ public class PointDeserializer extends JsonDeserializer<Point> {
 
     @Override
     @SneakyThrows
-    public Point deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public Point deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         Double lat = null, lng = null;
 
         TreeNode tn = p.readValueAsTree();

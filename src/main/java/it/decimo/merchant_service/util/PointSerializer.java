@@ -1,14 +1,14 @@
 package it.decimo.merchant_service.util;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
-
 import org.springframework.data.geo.Point;
+
+import java.io.IOException;
+import java.util.HashMap;
+
 /**
  * Serializzatore per il {@see Point}
  */

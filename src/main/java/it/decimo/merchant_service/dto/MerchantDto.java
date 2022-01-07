@@ -1,22 +1,33 @@
 package it.decimo.merchant_service.dto;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.springframework.data.geo.Point;
-
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.model.MerchantData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.geo.Point;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class MerchantDto {
+
+    private Integer id;
+    private Point storeLocation;
+    /**
+     * Contiene la distanza che viene calcolata al momento della query per ciascun
+     * client
+     */
+    private Double distance;
+    private Integer freeSeats;
+    private Integer totalSeats;
+    private double occupancyRate;
+    private String storeName;
+    private Integer owner;
 
     public MerchantDto(Merchant merchant, MerchantData data) {
         this.id = merchant.getId();
@@ -39,21 +50,6 @@ public class MerchantDto {
         this.occupancyRate = merchant.getOccupancyRate();
     }
 
-    private Integer id;
-
-    private Point storeLocation;
-
-    /**
-     * Contiene la distanza che viene calcolata al momento della query per ciascun
-     * client
-     */
-    private Double distance;
-
-    private Integer freeSeats;
-    private Integer totalSeats;
-
-    private double occupancyRate;
-
     public Point getPoint() {
         return storeLocation;
     }
@@ -71,8 +67,4 @@ public class MerchantDto {
     public void setStoreLocation(Location location) {
         this.storeLocation = new Point(location.getX(), location.getY());
     }
-
-    private String storeName;
-
-    private Integer owner;
 }

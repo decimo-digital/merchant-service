@@ -10,11 +10,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableJpaRepositories
 @EnableWebMvc
-@CrossOrigin(origins = { "*" })
+@CrossOrigin(origins = {"*"})
 public class MerchantServiceApplication {
 
-       public static void main(String[] args) {
-              SpringApplication.run(MerchantServiceApplication.class);
-       }
+    public static void main(String[] args) {
+        SpringApplication.run(MerchantServiceApplication.class);
+    }
 
 }
