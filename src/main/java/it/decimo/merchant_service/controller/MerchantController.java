@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/merchant")
@@ -76,11 +78,11 @@ public class MerchantController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Il merchant è stato cancellato", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste")})
-    public ResponseEntity<Object> deleteMerchant(@PathVariable int id) {
+    public ResponseEntity<Object> deleteMerchant(@PathVariable int id, @PathParam("requesterId") Integer requesterId) {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.notFound().build();
         }
-        merchantService.deleteMerchant(id);
+        merchantService.deleteMerchant(id, requesterId);
         return ResponseEntity.ok().body(new BasicResponse("Merchant cancellato", "MERCHANT_DELETED"));
     }
 }

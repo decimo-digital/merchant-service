@@ -135,15 +135,19 @@ public class MerchantService {
      * Elimina il merchant con l'id richiesto (eliminazione logica)
      *
      * @param merchantId Il merchant da eliminare
-     * @throws IllegalArgumentException se non è stato trovato il merchant richiesto
+     * @throws IllegalArgumentException se non è stato trovato il merchant richiesto oppure l'utente non è il proprietario del locale e non può eliminarlo
      */
-    public void deleteMerchant(int merchantId) throws IllegalArgumentException {
+    public void deleteMerchant(int merchantId, int requesterId) throws IllegalArgumentException {
         if (!merchantExists(merchantId)) {
             throw new IllegalArgumentException("Merchant with id " + merchantId + " does not exist");
         }
 
         final var merchant = merchantRepository.findById(merchantId).get();
-        merchant.setEnabled(false);
-        merchantRepository.save(merchant);
+        if (merchant.getOwner() == requesterId) {
+            merchant.setEnabled(false);
+            merchantRepository.save(merchant);
+        } else {
+            throw new IllegalArgumentException("Merchant with id " + merchantId + " is not owned by user " + requesterId);
+        }
     }
 }
