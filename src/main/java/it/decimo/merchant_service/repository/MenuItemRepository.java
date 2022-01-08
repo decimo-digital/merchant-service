@@ -3,6 +3,7 @@ package it.decimo.merchant_service.repository;
 import it.decimo.merchant_service.model.MenuItem;
 import it.decimo.merchant_service.model.Merchant;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,7 +20,4 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
      */
     @Query(value = "SELECT * FROM merchant_menu WHERE merchant_id = :merchantId", nativeQuery = true)
     List<MenuItem> findById_MerchantId(@Param(value = "merchantId") Integer merchantId);
-
-    @Query(value = "DELETE FROM merchant_menu WHERE menu_item_id = :menuItemId and merchant_id = :merchant_id", nativeQuery = true)
-    void deleteItem(@Param(value = "menuItemId") int menuItemId, @Param(value = "merchant_id") int merchantId);
 }

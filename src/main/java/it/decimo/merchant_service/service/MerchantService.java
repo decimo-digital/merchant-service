@@ -31,11 +31,15 @@ public class MerchantService {
     public boolean merchantExists(Integer id) {
         log.info("Looking for existance of if {}", id);
         final var found = merchantRepository.findById(id);
-        log.info("Merchant of id {} eists: {}", id, found.isPresent());
+        log.info("Merchant of id {} exists: {}", id, found.isPresent());
 
         if (found.isPresent()) {
-            log.info("Requested merchant {} is found but it's deleted", id);
-            return found.get().isEnabled();
+            final var merch = found.get();
+            log.info("Requested merchant {} is found", id);
+            if (merch.isEnabled()) {
+                log.info("Merchant is deleted");
+            }
+            return merch.isEnabled();
         }
         return false;
     }

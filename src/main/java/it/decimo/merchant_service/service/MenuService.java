@@ -38,14 +38,27 @@ public class MenuService {
      */
     public MenuItem save(int merchantId, MenuItem item) {
         item.setMerchantId(merchantId);
-        return menuItemRepository.save(item);
+        item.setMenuItemId(null);
+
+        log.info("Saving item {}-{}", item.getMenuItemId(), merchantId);
+
+        final var saved = menuItemRepository.save(item);
+        log.info("Saved item {}-{}", saved.getMenuItemId(), merchantId);
+        return saved;
     }
 
     /**
      * Rimuove un oggetto dal menu del locale, se è effettivamente suo
      */
     public void deleteItem(int menuItemId, int merchantId) {
-        log.info("Deleted item {}-{}", menuItemId, merchantId);
-        menuItemRepository.deleteItem(menuItemId, merchantId);
+        log.info("Deleting item {}-{}", menuItemId, merchantId);
+        menuItemRepository.deleteById(menuItemId);
+
+        final var stillExists = menuItemRepository.findById(menuItemId).isPresent();
+        if (stillExists) {
+            log.error("Failed to delete item {}", menuItemId);
+        } else {
+            log.info("Item {} deleted", menuItemId);
+        }
     }
 }
