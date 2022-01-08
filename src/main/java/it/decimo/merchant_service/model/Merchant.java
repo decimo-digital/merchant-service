@@ -50,6 +50,10 @@ public class Merchant {
     @Column(name = "total_seats")
     @JsonAlias(value = "total_seats")
     private Integer totalSeats;
+    
+    @Column(name = "cuisine_type")
+    private String cuisineType;
+
 
     @JsonIgnore
     public Point getPoint() {

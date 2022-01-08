@@ -28,6 +28,7 @@ public class MerchantDto {
     private double occupancyRate;
     private String storeName;
     private Integer owner;
+    private String cuisineType;
 
     public MerchantDto(Merchant merchant, MerchantData data) {
         this.id = merchant.getId();
@@ -35,6 +36,7 @@ public class MerchantDto {
         this.storeName = merchant.getStoreName();
         this.owner = merchant.getOwner();
         this.occupancyRate = merchant.getOccupancyRate();
+        this.cuisineType = merchant.getCuisineType();
         if (data != null) {
             this.totalSeats = data.getTotalSeats();
         }
@@ -46,6 +48,7 @@ public class MerchantDto {
         this.storeName = merchant.getStoreName();
         this.owner = merchant.getOwner();
         this.freeSeats = merchant.getFreeSeats();
+        this.cuisineType = merchant.getCuisineType();
         this.totalSeats = merchant.getTotalSeats();
         this.occupancyRate = merchant.getOccupancyRate();
     }
