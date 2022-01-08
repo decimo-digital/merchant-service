@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
+import it.decimo.merchant_service.model.MenuCategory;
 import it.decimo.merchant_service.model.MenuItem;
 import it.decimo.merchant_service.service.MenuService;
 import it.decimo.merchant_service.service.MerchantService;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/merchant/{id}/menu")
@@ -35,6 +37,14 @@ public class MenuController {
             return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
         }
         return ResponseEntity.ok(menuService.getMenu(id));
+    }
+
+    @GetMapping("/categories")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ritorna la lista di categorie per i piatti del menu", content = @Content(array = @ArraySchema(minItems = 0, uniqueItems = true, schema = @Schema(implementation = MenuCategory.class))))
+    })
+    public List<MenuCategory> getCategories() {
+        return menuService.getCategories();
     }
 
     @ApiResponses(value = {

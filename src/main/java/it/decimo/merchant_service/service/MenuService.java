@@ -1,8 +1,9 @@
 package it.decimo.merchant_service.service;
 
+import it.decimo.merchant_service.model.MenuCategory;
 import it.decimo.merchant_service.model.MenuItem;
+import it.decimo.merchant_service.repository.MenuCategoryRepository;
 import it.decimo.merchant_service.repository.MenuItemRepository;
-import it.decimo.merchant_service.repository.MerchantRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,9 @@ import java.util.List;
 public class MenuService {
 
     @Autowired
-    private MerchantRepository merchantRepository;
-    @Autowired
     private MenuItemRepository menuItemRepository;
+    @Autowired
+    private MenuCategoryRepository menuCategoryRepository;
 
 
     /**
@@ -60,5 +61,12 @@ public class MenuService {
         } else {
             log.info("Item {} deleted", menuItemId);
         }
+    }
+
+    /**
+     * Restituisce tutte le categorie di piatti
+     */
+    public List<MenuCategory> getCategories() {
+        return menuCategoryRepository.findAll();
     }
 }
