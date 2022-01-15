@@ -36,7 +36,7 @@ public class MerchantService {
         if (found.isPresent()) {
             final var merch = found.get();
             log.info("Requested merchant {} is found", id);
-            if (merch.isEnabled()) {
+            if (!merch.isEnabled()) {
                 log.info("Merchant is deleted");
             }
             return merch.isEnabled();
