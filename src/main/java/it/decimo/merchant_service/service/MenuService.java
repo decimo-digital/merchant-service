@@ -1,11 +1,13 @@
 package it.decimo.merchant_service.service;
 
+import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.model.MenuCategory;
 import it.decimo.merchant_service.model.MenuItem;
 import it.decimo.merchant_service.repository.MenuCategoryRepository;
 import it.decimo.merchant_service.repository.MenuItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,8 @@ public class MenuService {
     private MenuItemRepository menuItemRepository;
     @Autowired
     private MenuCategoryRepository menuCategoryRepository;
+    @Autowired
+    private MerchantService merchantService;
 
 
     /**
@@ -61,6 +65,38 @@ public class MenuService {
         } else {
             log.info("Item {} deleted", menuItemId);
         }
+    }
+
+    /**
+     * Aggiorna un oggetto del menu del locale con i dati nuovi
+     *
+     * @param merchantId Il locale a cui l'oggetto appartiene
+     * @param item       L'oggetto da aggiornare
+     * @param requester  chi ha richiesto l'aggiornamento
+     */
+    public ResponseEntity<Object> updateItem(int merchantId, MenuItem item, int requester) {
+        if (!merchantService.isUserOwner(merchantId, requester)) {
+            return ResponseEntity.status(401).body(new BasicResponse("You are not the owner of this merchant", "UNAUTHORIZED"));
+        }
+
+        final var oldItem = menuItemRepository.findById(item.getMenuItemId()).orElse(null);
+        if (oldItem == null) {
+            return ResponseEntity.status(404).body(new BasicResponse("Item not found", "NOT_FOUND"));
+        }
+
+        if (item.getName() != null) {
+            oldItem.setName(item.getName());
+        }
+        if (item.getPrice() != null) {
+            oldItem.setPrice(item.getPrice());
+        }
+        if (item.getCategoryId() != null) {
+            oldItem.setCategoryId(item.getCategoryId());
+        }
+
+        final var saved = menuItemRepository.save(oldItem);
+
+        return ResponseEntity.ok().body(saved);
     }
 
     /**

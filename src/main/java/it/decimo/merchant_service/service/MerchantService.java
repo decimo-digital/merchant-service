@@ -45,6 +45,14 @@ public class MerchantService {
     }
 
     /**
+     * Controlla se esiste un {@link Merchant} con l'id richiesto e se l'utente passato è l'owner
+     */
+    public boolean isUserOwner(int userId, int merchantId) {
+        final var found = merchantRepository.findById(merchantId);
+        return found.filter(merchant -> merchant.getOwner() == userId).isPresent();
+    }
+
+    /**
      * Salva il merchant passato come parametro all'interno del DB
      *
      * @param merchant il merchant da salvare
