@@ -44,7 +44,7 @@ public class MenuController {
             @ApiResponse(responseCode = "404", description = "L'oggetto richiesto non esiste", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
             @ApiResponse(responseCode = "401", description = "L'utente che ha richiesto l'update non è autorizzato", content = @Content(schema = @Schema(implementation = BasicResponse.class)))
     })
-    public ResponseEntity<Object> updateItem(@PathVariable int id, @RequestBody MenuItem item, @PathVariable(value = "requester") int requester) {
+    public ResponseEntity<Object> updateItem(@PathVariable int id, @RequestBody MenuItem item, @PathParam(value = "requester") int requester) {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
         }
