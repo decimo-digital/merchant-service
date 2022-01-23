@@ -36,15 +36,15 @@ public class MerchantController {
 
     @PostMapping(produces = "application/json")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Il merchant è stato salvato", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Il merchant è stato salvato", content = @Content(schema = @Schema(implementation = MerchantDto.class))),
             @ApiResponse(responseCode = "500", description = "Per qualche problema non ha salvato il merchant", content = @Content(schema = @Schema(implementation = BasicResponse.class)))})
     public ResponseEntity<Object> saveItem(@RequestBody Merchant merchant) {
-        final var id = merchantService.saveMerchant(merchant);
-        if (id == null) {
+        final var merch = merchantService.saveMerchant(merchant);
+        if (merch == null) {
             return ResponseEntity.internalServerError()
                     .body(new BasicResponse("C'è stato qualche errore a salvare il merchant", "GENERIC_ERROR"));
         } else {
-            return ResponseEntity.ok().body(BasicResponse.builder().message(id.toString()).code("OK").build());
+            return ResponseEntity.ok().body(merch);
         }
     }
 

@@ -75,14 +75,16 @@ public class MerchantService {
      * @return {@code null} se non è stato possibile salvare il merchant, altrimenti
      * il suo {@code id}
      */
-    public Integer saveMerchant(Merchant merchant) {
+    public MerchantDto saveMerchant(Merchant merchant) {
         try {
             log.info("Saving merchant '{}'", merchant.getStoreName());
-            final var merchId = merchantRepository.save(merchant).getId();
+            final var saved = merchantRepository.save(merchant);
             final var data = new MerchantData();
-            data.setMerchantId(merchId);
+            data.setDescription(merchant.getDescription());
+            data.setTotalSeats(merchant.getTotalSeats());
+            data.setMerchantId(saved.getId());
             merchantDataRepository.save(data);
-            return merchId;
+            return getMerchant(saved.getId());
         } catch (Exception e) {
             log.error("Got error while saving merchant {}", merchant.getStoreName(), e);
             return null;

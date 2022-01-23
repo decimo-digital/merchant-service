@@ -72,7 +72,9 @@ public class Merchant {
 
     @JsonAnySetter
     public void setStoreLocation(Location location) {
-        this.storeLocation = new Point(location.getX(), location.getY());
+        if(location != null) {
+            this.storeLocation = new Point(location.getX(), location.getY());
+        }
     }
 
 }
