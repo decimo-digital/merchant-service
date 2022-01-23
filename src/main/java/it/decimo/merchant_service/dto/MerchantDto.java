@@ -2,7 +2,6 @@ package it.decimo.merchant_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.decimo.merchant_service.model.Merchant;
-import it.decimo.merchant_service.model.MerchantData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,18 +30,6 @@ public class MerchantDto {
     private Integer owner;
     private String cuisineType;
 
-    public MerchantDto(Merchant merchant, MerchantData data) {
-        this.id = merchant.getId();
-        this.storeLocation = merchant.getPoint();
-        this.storeName = merchant.getStoreName();
-        this.storeDescription = merchant.getDescription();
-        this.owner = merchant.getOwner();
-        this.occupancyRate = merchant.getOccupancyRate();
-        this.cuisineType = merchant.getCuisineType();
-        if (data != null) {
-            this.totalSeats = data.getTotalSeats();
-        }
-    }
 
     public MerchantDto(Merchant merchant) {
         this.id = merchant.getId();

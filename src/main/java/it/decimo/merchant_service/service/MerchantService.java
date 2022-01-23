@@ -3,9 +3,7 @@ package it.decimo.merchant_service.service;
 import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.model.Merchant;
-import it.decimo.merchant_service.model.MerchantData;
 import it.decimo.merchant_service.repository.CustomRepository;
-import it.decimo.merchant_service.repository.MerchantDataRepository;
 import it.decimo.merchant_service.repository.MerchantRepository;
 import it.decimo.merchant_service.util.Distance;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +20,7 @@ public class MerchantService {
     private CustomRepository customRepository;
     @Autowired
     private MerchantRepository merchantRepository;
-    @Autowired
-    private MerchantDataRepository merchantDataRepository;
+
 
     /**
      * Controlla se esiste un {@link Merchant} con l'id richiesto
@@ -79,11 +76,6 @@ public class MerchantService {
         try {
             log.info("Saving merchant '{}'", merchant.getStoreName());
             final var saved = merchantRepository.save(merchant);
-            final var data = new MerchantData();
-            data.setDescription(merchant.getDescription());
-            data.setTotalSeats(merchant.getTotalSeats());
-            data.setMerchantId(saved.getId());
-            merchantDataRepository.save(data);
             return getMerchant(saved.getId());
         } catch (Exception e) {
             log.error("Got error while saving merchant {}", merchant.getStoreName(), e);
@@ -133,18 +125,17 @@ public class MerchantService {
     /***
      * Aggiorna lo status del {@link Merchant} con i dati passati nell'update
      */
-    public MerchantData updateMerchant(MerchantData update) {
-        final var data = merchantDataRepository.findById(update.getMerchantId()).get();
+    public Merchant updateMerchant(Merchant update) {
+        try {
+            final var data = merchantRepository.findById(update.getId()).get();
 
-        if (update.getTotalSeats() != null) {
-            data.setTotalSeats(update.getTotalSeats());
+            update.setId(data.getId());
+
+            return merchantRepository.save(data);
+        } catch (Exception e) {
+            log.warn("Failed to update merchant {}", update.getId(), e);
+            return null;
         }
-
-        if (update.getDescription() != null) {
-            data.setDescription(update.getDescription());
-        }
-
-        return merchantDataRepository.save(data);
     }
 
     /**
