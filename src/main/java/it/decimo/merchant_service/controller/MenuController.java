@@ -10,6 +10,7 @@ import it.decimo.merchant_service.model.MenuCategory;
 import it.decimo.merchant_service.model.MenuItem;
 import it.decimo.merchant_service.service.MenuService;
 import it.decimo.merchant_service.service.MerchantService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/merchant/{id}/menu")
 public class MenuController {
 
@@ -39,13 +41,15 @@ public class MenuController {
 
     @PatchMapping()
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ritorna la copia dell'oggetto modificato correttamente", content = @Content(schema = @Schema(implementation = MenuItem.class))),
+            @ApiResponse(responseCode = "200", description = "Ritorna la copia dell'oggetto modificato correttamente", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
             @ApiResponse(responseCode = "404", description = "Il ristorante ricercato non esite", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
             @ApiResponse(responseCode = "404", description = "L'oggetto richiesto non esiste", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
             @ApiResponse(responseCode = "401", description = "L'utente che ha richiesto l'update non è autorizzato", content = @Content(schema = @Schema(implementation = BasicResponse.class)))
     })
-    public ResponseEntity<Object> updateItem(@PathVariable int id, @RequestBody MenuItem item, @PathVariable(value = "requester") int requester) {
+    public ResponseEntity<Object> updateItem(@PathVariable int id, @RequestBody MenuItem item, @PathParam(value = "requester") int requester) {
+        log.info("User {} is updating menuItem of id {} of merchant {}", requester, item.getMenuItemId(), id);
         if (!merchantService.merchantExists(id)) {
+            log.info("Merchant {} not found", id);
             return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
         }
         return menuService.updateItem(id, item, requester);

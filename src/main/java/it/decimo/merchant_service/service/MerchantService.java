@@ -49,7 +49,23 @@ public class MerchantService {
      */
     public boolean isUserOwner(int userId, int merchantId) {
         final var found = merchantRepository.findById(merchantId);
-        return found.filter(merchant -> merchant.getOwner() == userId).isPresent();
+
+        if (found.isEmpty()) {
+            log.info("Merchant {} not found", merchantId);
+            return false;
+        }
+
+        final var merch = found.get();
+
+        log.info("Found merchant {} of owner {}", merchantId, merch.getOwner());
+
+        if (merch.getOwner() != userId) {
+            log.info("User {} is not the owner of merchant {}", userId, merchantId);
+            return false;
+        } else {
+            log.info("User {} is the owner of merchant {}", userId, merchantId);
+            return true;
+        }
     }
 
     /**

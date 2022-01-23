@@ -75,7 +75,8 @@ public class MenuService {
      * @param requester  chi ha richiesto l'aggiornamento
      */
     public ResponseEntity<Object> updateItem(int merchantId, MenuItem item, int requester) {
-        if (!merchantService.isUserOwner(merchantId, requester)) {
+        if (!merchantService.isUserOwner(requester, merchantId)) {
+            log.info("User {} is not owner of merchant {}", requester, merchantId);
             return ResponseEntity.status(401).body(new BasicResponse("You are not the owner of this merchant", "UNAUTHORIZED"));
         }
 
@@ -95,6 +96,8 @@ public class MenuService {
         }
 
         final var saved = menuItemRepository.save(oldItem);
+
+        log.info("Item {} of merchant {} updated", saved.getMenuItemId(), merchantId);
 
         return ResponseEntity.ok().body(saved);
     }
