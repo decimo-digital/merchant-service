@@ -130,8 +130,8 @@ public class MerchantService {
             final var data = merchantRepository.findById(update.getId()).get();
 
             update.setId(data.getId());
-
-            return merchantRepository.save(data);
+            log.info("Updating merchant {}", update.getId());
+            return merchantRepository.save(update);
         } catch (Exception e) {
             log.warn("Failed to update merchant {}", update.getId(), e);
             return null;

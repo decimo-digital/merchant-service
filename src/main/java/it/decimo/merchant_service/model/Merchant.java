@@ -50,7 +50,7 @@ public class Merchant {
     @Column(name = "total_seats")
     @JsonAlias(value = "total_seats")
     private Integer totalSeats;
-    
+
     @Column(name = "cuisine_type")
     private String cuisineType;
 
@@ -62,6 +62,9 @@ public class Merchant {
 
     @JsonAnyGetter
     public Map<String, Double> getStoreLocation() {
+        if (storeLocation == null) {
+            return null;
+        }
         return new HashMap<String, Double>() {
             {
                 put("lat", storeLocation.getX());
@@ -72,7 +75,7 @@ public class Merchant {
 
     @JsonAnySetter
     public void setStoreLocation(Location location) {
-        if(location != null) {
+        if (location != null) {
             this.storeLocation = new Point(location.getX(), location.getY());
         }
     }

@@ -49,15 +49,15 @@ public class MerchantController {
 
     @PostMapping("/{id}/update")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Il merchant è stato aggiornato", content = @Content(schema = @Schema(implementation = BasicResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Il merchant è stato aggiornato", content = @Content(schema = @Schema(implementation = Merchant.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste")})
     public ResponseEntity<Object> patchMerchantStatus(@PathVariable int id, @RequestBody Merchant update) {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.notFound().build();
         }
         
-        merchantService.updateMerchant(update);
-        return ResponseEntity.ok().body(new BasicResponse("Merchant aggiornato", "MERCHANT_UPDATED"));
+        final var newMerchant = merchantService.updateMerchant(update);
+        return ResponseEntity.ok().body(newMerchant);
     }
 
     @GetMapping("/{id}/data")
