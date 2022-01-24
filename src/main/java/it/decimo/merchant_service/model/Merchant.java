@@ -53,6 +53,9 @@ public class Merchant {
 
     @Column(name = "cuisine_type")
     private String cuisineType;
+    
+    @Column(name="image")
+    private String image;
 
 
     @JsonIgnore
