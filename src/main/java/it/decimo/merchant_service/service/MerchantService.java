@@ -94,7 +94,7 @@ public class MerchantService {
     public List<MerchantDto> getMerchants() {
         final var merchants = merchantRepository.findAll()
                 .stream()
-                .map(m -> (MerchantDto) getMerchant(m.getId()).getBody())
+                .map(MerchantDto::new)
                 .collect(Collectors.toList());
 
         log.info("Found {} merchants", merchants.size());
