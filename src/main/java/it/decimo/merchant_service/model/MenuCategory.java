@@ -1,6 +1,5 @@
 package it.decimo.merchant_service.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,7 @@ public class MenuCategory {
     @Id
     @GeneratedValue
     private int id;
-    
+
     @Column(name = "name")
     private String name;
 }

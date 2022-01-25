@@ -1,10 +1,7 @@
 package it.decimo.merchant_service.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,7 +9,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "menu_item")
-@Data
+@Getter
+@Setter
 public class MenuItem {
     @Id
     @Column(name = "item_id")
