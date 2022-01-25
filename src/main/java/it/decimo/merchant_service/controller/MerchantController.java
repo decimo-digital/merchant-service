@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
-import it.decimo.merchant_service.dto.Location;
 import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.service.MerchantService;
@@ -27,9 +26,8 @@ public class MerchantController {
     @GetMapping(produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ritorna la lista di esercenti disponibili. Opzionalmente ordinata", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Merchant.class), minItems = 0, uniqueItems = true)))})
-    public ResponseEntity<Object> findAll(@RequestParam(name = "lat", required = false) Double lat,
-                                          @RequestParam(name = "lng", required = false) Double lng) {
-        final var merchants = merchantService.getMerchants(new Location(lat, lng));
+    public ResponseEntity<Object> findAll() {
+        final var merchants = merchantService.getMerchants();
         return ResponseEntity.ok().body(merchants);
     }
 
@@ -55,7 +53,7 @@ public class MerchantController {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.notFound().build();
         }
-        
+
         final var newMerchant = merchantService.updateMerchant(update);
         return ResponseEntity.ok().body(newMerchant);
     }

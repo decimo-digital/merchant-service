@@ -1,26 +1,28 @@
 package it.decimo.merchant_service.service;
 
-import it.decimo.merchant_service.dto.Location;
+import it.decimo.merchant_service.connectors.PrenotationServiceConnector;
+import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.dto.MerchantDto;
+import it.decimo.merchant_service.dto.Prenotation;
 import it.decimo.merchant_service.model.Merchant;
-import it.decimo.merchant_service.repository.CustomRepository;
 import it.decimo.merchant_service.repository.MerchantRepository;
-import it.decimo.merchant_service.util.Distance;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class MerchantService {
-    @Autowired
-    private CustomRepository customRepository;
+
     @Autowired
     private MerchantRepository merchantRepository;
-
+    @Autowired
+    private PrenotationServiceConnector prenotationServiceConnector;
 
     /**
      * Controlla se esiste un {@link Merchant} con l'id richiesto
@@ -72,54 +74,32 @@ public class MerchantService {
      * @return {@code null} se non è stato possibile salvare il merchant, altrimenti
      * il suo {@code id}
      */
-    public MerchantDto saveMerchant(Merchant merchant) {
+    public ResponseEntity<Object> saveMerchant(Merchant merchant) {
         try {
             log.info("Saving merchant '{}'", merchant.getStoreName());
             final var saved = merchantRepository.save(merchant);
             return getMerchant(saved.getId());
         } catch (Exception e) {
             log.error("Got error while saving merchant {}", merchant.getStoreName(), e);
-            return null;
+            return ResponseEntity.internalServerError().body(e);
         }
     }
 
     /**
      * Ritorna la lista di esercenti
      *
-     * @param point Opzionale -- definisce il centro dal quale recuperare i
-     *              merchant. Se definito i merchant vengono ritornati ordinati
      * @return La lista degli esercenti, opzionalmente ordinata (se point è
      * definito)
      */
-    public List<MerchantDto> getMerchants(Location point) {
-        final var merchants = customRepository.findAllMerchantsWithMetadata();
+    public List<MerchantDto> getMerchants() {
+        final var merchants = merchantRepository.findAll()
+                .stream()
+                .map(m -> (MerchantDto) getMerchant(m.getId()).getBody())
+                .collect(Collectors.toList());
 
         log.info("Found {} merchants", merchants.size());
-        final var toReturn = new ArrayList<MerchantDto>();
 
-        merchants.forEach(m -> {
-            toReturn.add(new MerchantDto(m));
-        });
-
-        if (point != null && (point.getX() != null && point.getY() != null)) {
-
-            for (MerchantDto merchant : toReturn) {
-                final var merchantPosition = merchant.getPoint();
-                if (merchantPosition != null) {
-                    final var distance = Distance.gps2m(merchantPosition, point.toPoint());
-                    merchant.setDistance(distance);
-                }
-
-            }
-            toReturn.sort((dto1, dto2) -> {
-                if (dto1 == null || dto2 == null || dto1.getDistance() == null || dto2.getDistance() == null) {
-                    return 0;
-                }
-                return dto1.getDistance().compareTo(dto2.getDistance());
-            });
-        }
-
-        return toReturn;
+        return merchants;
     }
 
     /***
@@ -144,12 +124,29 @@ public class MerchantService {
      * @param id L'id del merchant
      * @return Il merchant con l'id richiesto, oppure {@code null} se non esiste
      */
-    public MerchantDto getMerchant(Integer id) {
+    public ResponseEntity<Object> getMerchant(Integer id) {
         if (!merchantExists(id)) {
             return null;
         }
-        final var merchant = customRepository.getMerchantData(id);
-        return new MerchantDto(merchant);
+
+        final var found = merchantRepository.findById(id);
+        if (found.isEmpty()) {
+            return ResponseEntity.status(404).body(new BasicResponse("Il merchant richiesto non esiste", "MERCHANT_NOT_FOUND"));
+        }
+
+        final var merchant = found.get();
+
+        final var prenotations = prenotationServiceConnector.getPrenotationsOfMerchant(merchant.getId());
+        if (prenotations.getStatusCode() == HttpStatus.OK) {
+            final var prenotationsToCompute = ((List<Prenotation>) prenotations.getBody());
+            merchant.setFreeSeats(merchant.getTotalSeats() - prenotationsToCompute.stream().map(Prenotation::getAmount).reduce(0, Integer::sum));
+            if (merchant.getTotalSeats() == 0) {
+                merchant.setOccupancyRate(100);
+            } else {
+                merchant.setOccupancyRate((merchant.getFreeSeats() / merchant.getTotalSeats()) * 100);
+            }
+        }
+        return ResponseEntity.status(200).body(new MerchantDto(merchant));
     }
 
     /**

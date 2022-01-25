@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "merchant_menu")
+@Entity(name = "menu_item")
 @Data
 public class MenuItem {
     @Id

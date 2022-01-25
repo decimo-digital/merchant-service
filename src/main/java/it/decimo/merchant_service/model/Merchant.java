@@ -1,19 +1,12 @@
 package it.decimo.merchant_service.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import it.decimo.merchant_service.dto.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @Builder
@@ -27,9 +20,6 @@ public class Merchant {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "location")
-    @JsonAlias(value = "location")
-    private Point storeLocation;
 
     @Column(name = "enabled")
     private boolean isEnabled;
@@ -53,34 +43,9 @@ public class Merchant {
 
     @Column(name = "cuisine_type")
     private String cuisineType;
-    
-    @Column(name="image")
+
+    @Column(name = "image")
     private String image;
 
-
-    @JsonIgnore
-    public Point getPoint() {
-        return storeLocation;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Double> getStoreLocation() {
-        if (storeLocation == null) {
-            return null;
-        }
-        return new HashMap<String, Double>() {
-            {
-                put("lat", storeLocation.getX());
-                put("lng", storeLocation.getY());
-            }
-        };
-    }
-
-    @JsonAnySetter
-    public void setStoreLocation(Location location) {
-        if (location != null) {
-            this.storeLocation = new Point(location.getX(), location.getY());
-        }
-    }
 
 }

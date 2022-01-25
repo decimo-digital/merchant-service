@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
+import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.model.MenuCategory;
 import it.decimo.merchant_service.model.MenuItem;
 import it.decimo.merchant_service.service.MenuService;
@@ -67,7 +68,14 @@ public class MenuController {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
         }
-        final var merchant = merchantService.getMerchant(id);
+        final var response = merchantService.getMerchant(id);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return response;
+        }
+
+        final var merchant = (MerchantDto) response.getBody();
+
         if (merchant.getOwner() != requester) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -84,7 +92,14 @@ public class MenuController {
             return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
         }
 
-        final var merchant = merchantService.getMerchant(merchantId);
+        final var response = merchantService.getMerchant(merchantId);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return response;
+        }
+
+        final var merchant = (MerchantDto) response.getBody();
+        
         if (merchant.getOwner() != requester) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
