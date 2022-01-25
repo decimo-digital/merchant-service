@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.dto.MerchantDto;
+import it.decimo.merchant_service.exceptions.NotFoundException;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.service.MerchantService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -63,12 +65,16 @@ public class MerchantController {
             @ApiResponse(responseCode = "200", description = "I dati del merchant richiesto", content = @Content(schema = @Schema(implementation = MerchantDto.class))),
             @ApiResponse(responseCode = "404", description = "Il merchant richiesto non esiste")})
     public ResponseEntity<Object> getMerchantData(@PathVariable int id) {
-        log.info("Getting data of merchant {}", id);
-        final var merchantDto = merchantService.getMerchant(id);
-        if (merchantDto == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            log.info("Getting data of merchant {}", id);
+            final var merchantDto = merchantService.getMerchant(id);
+            if (merchantDto == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(merchantDto);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(new BasicResponse("Il merchant richiesto non esiste", "MERCHANT_NOT_FOUND"));
         }
-        return ResponseEntity.ok(merchantDto);
     }
 
     @DeleteMapping("/{id}")

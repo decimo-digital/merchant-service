@@ -6,11 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.decimo.merchant_service.dto.BasicResponse;
-import it.decimo.merchant_service.dto.MerchantDto;
+import it.decimo.merchant_service.exceptions.NotFoundException;
 import it.decimo.merchant_service.model.MenuCategory;
 import it.decimo.merchant_service.model.MenuItem;
 import it.decimo.merchant_service.service.MenuService;
 import it.decimo.merchant_service.service.MerchantService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,17 +65,12 @@ public class MenuController {
 
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ritorna l'id dell'oggetto che è stato inserito", content = @Content(schema = @Schema(implementation = BasicResponse.class))), @ApiResponse(responseCode = "404", description = "Il ristorante ricercato non esite", content = @Content(schema = @Schema(implementation = BasicResponse.class))), @ApiResponse(responseCode = "401", description = "L'utente non può effettuare la richiesta perché non è il proprietario del merchant", content = @Content(schema = @Schema(implementation = BasicResponse.class)))})
     @PostMapping
+    @SneakyThrows
     public ResponseEntity<Object> insertItem(@PathVariable int id, @RequestBody MenuItem item, @PathParam(value = "requester") int requester) {
         if (!merchantService.merchantExists(id)) {
             return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
         }
-        final var response = merchantService.getMerchant(id);
-
-        if (response.getStatusCode() != HttpStatus.OK) {
-            return response;
-        }
-
-        final var merchant = (MerchantDto) response.getBody();
+        final var merchant = merchantService.getMerchant(id);
 
         if (merchant.getOwner() != requester) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -87,24 +83,23 @@ public class MenuController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ha rimosso l'oggetto dal menu del locale", content = @Content(schema = @Schema(implementation = BasicResponse.class))), @ApiResponse(responseCode = "404", description = "Il locale non è stato trovato", content = @Content(schema = @Schema(implementation = BasicResponse.class))), @ApiResponse(responseCode = "401", description = "L'utente non può effettuare la richiesta perché non è il proprietario del merchant", content = @Content(schema = @Schema(implementation = BasicResponse.class)))})
 
     @DeleteMapping("/{itemId}")
+    @SneakyThrows
     public ResponseEntity<Object> deleteMenuItem(@PathVariable(name = "id") int merchantId, @PathVariable(name = "itemId") int itemId, @PathParam(value = "requester") int requester) {
-        if (!merchantService.merchantExists(merchantId)) {
-            return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
+        try {
+            if (!merchantService.merchantExists(merchantId)) {
+                return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_MERCH_FOUND"));
+            }
+
+            final var merchant = merchantService.getMerchant(merchantId);
+
+            if (merchant.getOwner() != requester) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            menuService.deleteItem(itemId, merchantId);
+            return ResponseEntity.ok().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(new BasicResponse("No merchant found", "NO_ITEM_FOUND"));
         }
-
-        final var response = merchantService.getMerchant(merchantId);
-
-        if (response.getStatusCode() != HttpStatus.OK) {
-            return response;
-        }
-
-        final var merchant = (MerchantDto) response.getBody();
-        
-        if (merchant.getOwner() != requester) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        menuService.deleteItem(itemId, merchantId);
-        return ResponseEntity.ok().build();
     }
 }

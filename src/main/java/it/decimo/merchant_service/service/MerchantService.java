@@ -1,9 +1,9 @@
 package it.decimo.merchant_service.service;
 
 import it.decimo.merchant_service.connectors.PrenotationServiceConnector;
-import it.decimo.merchant_service.dto.BasicResponse;
 import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.dto.Prenotation;
+import it.decimo.merchant_service.exceptions.NotFoundException;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.repository.MerchantRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -124,14 +124,14 @@ public class MerchantService {
      * @param id L'id del merchant
      * @return Il merchant con l'id richiesto, oppure {@code null} se non esiste
      */
-    public ResponseEntity<Object> getMerchant(Integer id) {
+    public MerchantDto getMerchant(Integer id) throws NotFoundException {
         if (!merchantExists(id)) {
             return null;
         }
 
         final var found = merchantRepository.findById(id);
         if (found.isEmpty()) {
-            return ResponseEntity.status(404).body(new BasicResponse("Il merchant richiesto non esiste", "MERCHANT_NOT_FOUND"));
+            throw new NotFoundException("Il merchant richiesto non esiste");
         }
 
         final var merchant = found.get();
@@ -149,7 +149,7 @@ public class MerchantService {
             }
             log.info("Merchant {} has an occupancy rate of {}", merchant.getId(), merchant.getOccupancyRate());
         }
-        return ResponseEntity.status(200).body(new MerchantDto(merchant));
+        return new MerchantDto(merchant);
     }
 
     /**
