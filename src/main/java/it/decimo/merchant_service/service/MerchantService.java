@@ -78,7 +78,7 @@ public class MerchantService {
         try {
             log.info("Saving merchant '{}'", merchant.getStoreName());
             final var saved = merchantRepository.save(merchant);
-            return getMerchant(saved.getId());
+            return ResponseEntity.ok(getMerchant(saved.getId()));
         } catch (Exception e) {
             log.error("Got error while saving merchant {}", merchant.getStoreName(), e);
             return ResponseEntity.internalServerError().body(e);
