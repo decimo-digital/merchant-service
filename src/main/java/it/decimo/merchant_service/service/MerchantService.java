@@ -139,12 +139,15 @@ public class MerchantService {
         final var prenotations = prenotationServiceConnector.getPrenotationsOfMerchant(merchant.getId());
         if (prenotations.getStatusCode() == HttpStatus.OK) {
             final var prenotationsToCompute = ((List<Prenotation>) prenotations.getBody());
+            log.info("Got {} prenotations for merchant {}", prenotationsToCompute.size(), merchant.getId());
             merchant.setFreeSeats(merchant.getTotalSeats() - prenotationsToCompute.stream().map(Prenotation::getAmount).reduce(0, Integer::sum));
+            log.info("Merchant {} has {} free seats", merchant.getId(), merchant.getFreeSeats());
             if (merchant.getTotalSeats() == 0) {
                 merchant.setOccupancyRate(100);
             } else {
                 merchant.setOccupancyRate((merchant.getFreeSeats() / merchant.getTotalSeats()) * 100);
             }
+            log.info("Merchant {} has an occupancy rate of {}", merchant.getId(), merchant.getOccupancyRate());
         }
         return ResponseEntity.status(200).body(new MerchantDto(merchant));
     }
