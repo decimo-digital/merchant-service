@@ -14,7 +14,6 @@ import javax.persistence.*;
 public class MenuItem {
     @Id
     @Column(name = "item_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer menuItemId;
 
     @Column(name = "merchant_id")
