@@ -18,6 +18,7 @@ public class MerchantDto {
     private String storeName;
     private Integer owner;
     private String cuisineType;
+    private String image;
 
 
     public MerchantDto(Merchant merchant) {
@@ -28,6 +29,7 @@ public class MerchantDto {
         this.freeSeats = merchant.getFreeSeats();
         this.cuisineType = merchant.getCuisineType();
         this.totalSeats = merchant.getTotalSeats();
+        this.image = merchant.getImage();
         this.occupancyRate = merchant.getOccupancyRate();
     }
 
