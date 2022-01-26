@@ -78,6 +78,7 @@ public class MerchantService {
             log.info("Saving merchant '{}'", merchant.getStoreName());
             final var id = merchantRepository.findTopById() + 1;
             merchant.setId(id);
+            log.info("Saving new merchant with id {}", id);
             final var saved = merchantRepository.save(merchant);
             return new MerchantDto(saved);
         } catch (Exception e) {

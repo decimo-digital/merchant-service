@@ -17,7 +17,7 @@ public class Merchant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    //@Column(name = "id", nullable = false, unique = true)
+    @Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
     @Column(name = "enabled", nullable = false)
