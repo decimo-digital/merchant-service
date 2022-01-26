@@ -1,5 +1,6 @@
 package it.decimo.merchant_service.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.decimo.merchant_service.connectors.PrenotationServiceConnector;
 import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.dto.Prenotation;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -140,7 +142,16 @@ public class MerchantService {
 
         final var prenotations = prenotationServiceConnector.getPrenotationsOfMerchant(merchant.getId());
         if (prenotations.getStatusCode() == HttpStatus.OK) {
-            final var prenotationsToCompute = ((List<Prenotation>) prenotations.getBody());
+            final var mapper = new ObjectMapper();
+            final var prenotationsToCompute = ((List<Object>) Objects.requireNonNull(prenotations.getBody())).stream().map(p -> {
+                        try {
+                            return mapper.readValue(mapper.writeValueAsString(p), Prenotation.class);
+                        } catch (Exception e) {
+                            log.error("Failed to parse prenotation", e);
+                            return null;
+                        }
+                    }).filter(Objects::nonNull)
+                    .collect(Collectors.toList());
             log.info("Got {} prenotations for merchant {}", prenotationsToCompute.size(), merchant.getId());
             merchant.setFreeSeats(merchant.getTotalSeats() - prenotationsToCompute.stream().map(Prenotation::getAmount).reduce(0, Integer::sum));
             log.info("Merchant {} has {} free seats", merchant.getId(), merchant.getFreeSeats());
