@@ -43,12 +43,14 @@ public class MenuService {
      */
     public MenuItem save(int merchantId, MenuItem item) {
         item.setMerchantId(merchantId);
-        item.setMenuItemId(null);
 
-        log.info("Saving item {}-{}", item.getMenuItemId(), merchantId);
+        final var id = menuItemRepository.getCurrentMaxId() + 1;
+        item.setMenuItemId(id);
+
+        log.info("Saving item {} of merchant {}", item.getMenuItemId(), merchantId);
 
         final var saved = menuItemRepository.save(item);
-        log.info("Saved item {}-{}", saved.getMenuItemId(), merchantId);
+        log.info("Saved item {} of merchant {}", saved.getMenuItemId(), merchantId);
         return saved;
     }
 

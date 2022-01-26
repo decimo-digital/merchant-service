@@ -9,7 +9,6 @@ import it.decimo.merchant_service.repository.MerchantRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -77,6 +76,8 @@ public class MerchantService {
     public MerchantDto saveMerchant(Merchant merchant) {
         try {
             log.info("Saving merchant '{}'", merchant.getStoreName());
+            final var id = merchantRepository.getCurrentMaxId() + 1;
+            merchant.setId(id);
             final var saved = merchantRepository.save(merchant);
             return new MerchantDto(saved);
         } catch (Exception e) {
