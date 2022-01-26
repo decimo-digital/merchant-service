@@ -171,4 +171,17 @@ public class MerchantService {
             throw new IllegalArgumentException("Merchant with id " + merchantId + " is not owned by user " + requesterId);
         }
     }
+
+    /**
+     * Recupera tutti i merchant collegati all'utente specificato
+     *
+     * @param userId L'id dell'utente
+     * @return La lista dei merchant collegati all'utente specificato
+     */
+    public List<MerchantDto> getMerchantsOfUser(int userId) {
+        return merchantRepository.findAllByOwner(userId)
+                .stream()
+                .map(MerchantDto::new)
+                .collect(Collectors.toList());
+    }
 }

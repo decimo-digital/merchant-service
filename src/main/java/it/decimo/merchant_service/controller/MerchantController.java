@@ -10,7 +10,6 @@ import it.decimo.merchant_service.dto.MerchantDto;
 import it.decimo.merchant_service.exceptions.NotFoundException;
 import it.decimo.merchant_service.model.Merchant;
 import it.decimo.merchant_service.service.MerchantService;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +57,13 @@ public class MerchantController {
 
         final var newMerchant = merchantService.updateMerchant(update);
         return ResponseEntity.ok().body(newMerchant);
+    }
+
+    @GetMapping("/user/{userId}")
+    @ApiResponse(responseCode = "200", description = "Ritorna il merchant associato all'utente", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Merchant.class), minItems = 0, uniqueItems = true)))
+    public ResponseEntity<Object> getMerchantsOfUser(@PathVariable int userId) {
+        final var merchants = merchantService.getMerchantsOfUser(userId);
+        return ResponseEntity.ok().body(merchants);
     }
 
     @GetMapping("/{id}/data")
