@@ -74,14 +74,14 @@ public class MerchantService {
      * @return {@code null} se non è stato possibile salvare il merchant, altrimenti
      * il suo {@code id}
      */
-    public ResponseEntity<Object> saveMerchant(Merchant merchant) {
+    public MerchantDto saveMerchant(Merchant merchant) {
         try {
             log.info("Saving merchant '{}'", merchant.getStoreName());
             final var saved = merchantRepository.save(merchant);
-            return ResponseEntity.ok(getMerchant(saved.getId()));
+            return new MerchantDto(saved);
         } catch (Exception e) {
             log.error("Got error while saving merchant {}", merchant.getStoreName(), e);
-            return ResponseEntity.internalServerError().body(e);
+            return null;
         }
     }
 

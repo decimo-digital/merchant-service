@@ -31,7 +31,7 @@ public class MenuService {
      */
     public List<MenuItem> getMenu(int merchantId) {
         log.info("Getting menu of {}", merchantId);
-        return menuItemRepository.findById_MerchantId(merchantId);
+        return menuItemRepository.findAllByMerchantId(merchantId);
     }
 
     /**

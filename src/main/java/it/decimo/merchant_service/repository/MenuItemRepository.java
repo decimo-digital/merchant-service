@@ -18,6 +18,5 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
      *
      * @param merchantId L'id del {@link Merchant} di cui ci interessa il menu
      */
-    @Query(value = "SELECT * FROM merchant_menu WHERE merchant_id = :merchantId", nativeQuery = true)
-    List<MenuItem> findById_MerchantId(@Param(value = "merchantId") Integer merchantId);
+    List<MenuItem> findAllByMerchantId(int merchantId);
 }
