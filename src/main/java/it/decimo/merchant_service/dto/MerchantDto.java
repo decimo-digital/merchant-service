@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class MerchantDto {
 
     private Integer id;
-    private String storeDescription;
+    private String description;
     private Integer freeSeats;
     private Integer totalSeats;
     private double occupancyRate;
@@ -24,7 +24,7 @@ public class MerchantDto {
         this.id = merchant.getId();
         this.storeName = merchant.getStoreName();
         this.owner = merchant.getOwner();
-        this.storeDescription = merchant.getDescription();
+        this.description = merchant.getDescription();
         this.freeSeats = merchant.getFreeSeats();
         this.cuisineType = merchant.getCuisineType();
         this.totalSeats = merchant.getTotalSeats();
