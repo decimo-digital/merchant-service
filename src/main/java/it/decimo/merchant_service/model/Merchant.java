@@ -16,8 +16,8 @@ import javax.persistence.*;
 public class Merchant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "merchant_id_seq")
-    @Column(name = "id", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
     @Column(name = "enabled", nullable = false)
