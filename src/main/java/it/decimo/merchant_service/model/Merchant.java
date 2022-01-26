@@ -46,7 +46,7 @@ public class Merchant {
     @JsonAlias(value = "total_seats")
     private Integer totalSeats;
 
-    @Column(name = "cuisine_type", nullable = false)
+    @Column(name = "cuisine_type")
     private String cuisineType;
 
     @Column(name = "image", length = 10485760)
