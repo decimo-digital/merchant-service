@@ -18,6 +18,6 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
      */
     List<MenuItem> findAllByMerchantId(int merchantId);
 
-    @Query(value = "SELECT max(item_id) FROM menu_item")
-    int getCurrentMaxId();
+    @Query(value = "SELECT max(item_id) FROM menu_item", nativeQuery = true)
+    Integer findTopByMenuItemId();
 }

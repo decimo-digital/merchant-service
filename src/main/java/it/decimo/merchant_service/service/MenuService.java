@@ -44,7 +44,7 @@ public class MenuService {
     public MenuItem save(int merchantId, MenuItem item) {
         item.setMerchantId(merchantId);
 
-        final var id = menuItemRepository.getCurrentMaxId() + 1;
+        final var id = menuItemRepository.findTopByMenuItemId() + 1;
         item.setMenuItemId(id);
 
         log.info("Saving item {} of merchant {}", item.getMenuItemId(), merchantId);

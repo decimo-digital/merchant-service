@@ -9,9 +9,9 @@ import java.util.List;
 
 @Repository
 public interface MerchantRepository extends JpaRepository<Merchant, Integer> {
-    
+
     List<Merchant> findAllByOwner(int owner);
-    
-    @Query(value = "SELECT max(id) from merchant")
-    int getCurrentMaxId();
+
+    @Query(value = "SELECT max(id) FROM merchant", nativeQuery = true)
+    Integer findTopById();
 }

@@ -76,7 +76,7 @@ public class MerchantService {
     public MerchantDto saveMerchant(Merchant merchant) {
         try {
             log.info("Saving merchant '{}'", merchant.getStoreName());
-            final var id = merchantRepository.getCurrentMaxId() + 1;
+            final var id = merchantRepository.findTopById() + 1;
             merchant.setId(id);
             final var saved = merchantRepository.save(merchant);
             return new MerchantDto(saved);
